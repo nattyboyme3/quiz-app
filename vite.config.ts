@@ -4,5 +4,5 @@ import react from '@vitejs/plugin-react'
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
-  base: '/quiz-app/', // replace 'quiz-app' with your repository name
+  base: '/quiz-app/', // this is correct for nattyboyme3/quiz-app
 })
