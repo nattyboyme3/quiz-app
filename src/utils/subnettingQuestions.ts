@@ -5,9 +5,28 @@ interface IPAddress {
 }
 
 function generateRandomIP(): IPAddress {
-  return {
-    octets: Array.from({ length: 4 }, () => Math.floor(Math.random() * 256))
-  };
+  // Randomly choose between 10.10.x.x and 192.168.x.x
+  const isTenTen = Math.random() < 0.5;
+  
+  if (isTenTen) {
+    return {
+      octets: [
+        10,
+        10,
+        Math.floor(Math.random() * 256),
+        Math.floor(Math.random() * 256)
+      ]
+    };
+  } else {
+    return {
+      octets: [
+        192,
+        168,
+        Math.floor(Math.random() * 256),
+        Math.floor(Math.random() * 256)
+      ]
+    };
+  }
 }
 
 function ipToString(ip: IPAddress): string {

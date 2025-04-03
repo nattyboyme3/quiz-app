@@ -18,13 +18,16 @@ export function Quiz() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
-      <div className="max-w-2xl mx-auto px-4">
-        <div className="mb-6 text-center">
-          <p className="text-gray-600">
+    <div className="min-h-screen bg-gray-50 py-8">
+      <div className="max-w-4xl mx-auto px-4">
+        <h1 className="text-3xl font-bold text-center text-gray-900 mb-8">
+          IP Subnetting Quiz
+        </h1>
+        <div className="text-center mb-4">
+          <p className="text-lg text-gray-600">
             Question {state.currentQuestionIndex + 1} of {state.questions.length}
           </p>
-          <p className="text-gray-600">
+          <p className="text-lg text-gray-600">
             Score: {state.score}
           </p>
         </div>
