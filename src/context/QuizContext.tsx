@@ -1,32 +1,12 @@
 import React, { createContext, useContext, useReducer } from 'react';
 import { QuizState, QuizContextType, Question } from '../types/quiz';
-
-const initialQuestions: Question[] = [
-  {
-    id: 1,
-    text: "What is the capital of France?",
-    options: ["London", "Berlin", "Paris", "Madrid"],
-    correctAnswer: 2
-  },
-  {
-    id: 2,
-    text: "Which planet is known as the Red Planet?",
-    options: ["Venus", "Mars", "Jupiter", "Saturn"],
-    correctAnswer: 1
-  },
-  {
-    id: 3,
-    text: "What is 2 + 2?",
-    options: ["3", "4", "5", "6"],
-    correctAnswer: 1
-  }
-];
+import { generateSubnettingQuestions } from '../utils/subnettingQuestions';
 
 const initialState: QuizState = {
   currentQuestionIndex: 0,
   score: 0,
   answers: [],
-  questions: initialQuestions,
+  questions: generateSubnettingQuestions(10), // Generate 10 questions by default
 };
 
 type QuizAction =
@@ -44,7 +24,10 @@ function quizReducer(state: QuizState, action: QuizAction): QuizState {
         answers: [...state.answers, action.payload],
       };
     case 'RESET_QUIZ':
-      return initialState;
+      return {
+        ...initialState,
+        questions: generateSubnettingQuestions(10), // Generate new questions on reset
+      };
     default:
       return state;
   }
