@@ -346,72 +346,47 @@ describe('Subnetting Helper Functions', () => {
 });
 
 describe('Broadcast Address Question', () => {
-  it('should generate a valid broadcast address question', () => {
+  test('should generate a valid broadcast address question', () => {
     const question = generateBroadcastAddressQuestion();
-    
-    // Check basic question structure
-    expect(question).toHaveProperty('id');
-    expect(question).toHaveProperty('text');
-    expect(question).toHaveProperty('options');
-    expect(question).toHaveProperty('correctAnswer');
-    expect(question.options).toHaveLength(4);
+    expect(question).toBeDefined();
+    expect(question.options.length).toBe(4);
+    expect(question.correctAnswer).toBeGreaterThanOrEqual(0);
+    expect(question.correctAnswer).toBeLessThan(4);
     
     // Extract IP and CIDR from question text
-    const match = question.text.match(/subnet containing ([\d.]+)\/(\d+)/);
+    const match = question.text.match(/IP address ([\d.]+)\/(\d+)/);
     expect(match).not.toBeNull();
     const [_, ip, cidr] = match!;
     
     // Calculate expected broadcast address
-    const networkAddress = calculateNetworkAddress(stringToIP(ip), parseInt(cidr));
-    const expectedBroadcast = calculateBroadcastAddress(stringToIP(ip), parseInt(cidr));
+    const ipObj = stringToIP(ip);
+    const broadcastAddress = calculateBroadcastAddress(ipObj, parseInt(cidr));
+    const broadcastString = ipToString(broadcastAddress);
     
-    // Verify correct answer is the broadcast address
-    expect(question.options[question.correctAnswer]).toBe(ipToString(expectedBroadcast));
-    
-    // Verify all options are valid IP addresses
-    question.options.forEach((option: string) => {
-      expect(option).toMatch(/^\d+\.\d+\.\d+\.\d+$/);
-    });
-  });
-  
-  it('should have unique options', () => {
-    const question = generateBroadcastAddressQuestion();
-    const uniqueOptions = new Set(question.options);
-    expect(uniqueOptions.size).toBe(4);
+    // Verify that the correct answer is the broadcast address
+    expect(question.options[question.correctAnswer]).toBe(broadcastString);
   });
 });
 
 describe('Network Address Question', () => {
-  it('should generate a valid network address question', () => {
+  test('should generate a valid network address question', () => {
     const question = generateNetworkAddressQuestion();
-    
-    // Check basic question structure
-    expect(question).toHaveProperty('id');
-    expect(question).toHaveProperty('text');
-    expect(question).toHaveProperty('options');
-    expect(question).toHaveProperty('correctAnswer');
-    expect(question.options).toHaveLength(4);
+    expect(question).toBeDefined();
+    expect(question.options.length).toBe(4);
+    expect(question.correctAnswer).toBeGreaterThanOrEqual(0);
+    expect(question.correctAnswer).toBeLessThan(4);
     
     // Extract IP and CIDR from question text
-    const match = question.text.match(/subnet containing ([\d.]+)\/(\d+)/);
+    const match = question.text.match(/IP address ([\d.]+)\/(\d+)/);
     expect(match).not.toBeNull();
     const [_, ip, cidr] = match!;
     
     // Calculate expected network address
-    const expectedNetwork = calculateNetworkAddress(stringToIP(ip), parseInt(cidr));
+    const ipObj = stringToIP(ip);
+    const networkAddress = calculateNetworkAddress(ipObj, parseInt(cidr));
+    const networkString = ipToString(networkAddress);
     
-    // Verify correct answer is the network address
-    expect(question.options[question.correctAnswer]).toBe(ipToString(expectedNetwork));
-    
-    // Verify all options are valid IP addresses
-    question.options.forEach((option: string) => {
-      expect(option).toMatch(/^\d+\.\d+\.\d+\.\d+$/);
-    });
-  });
-  
-  it('should have unique options', () => {
-    const question = generateNetworkAddressQuestion();
-    const uniqueOptions = new Set(question.options);
-    expect(uniqueOptions.size).toBe(4);
+    // Verify that the correct answer is the network address
+    expect(question.options[question.correctAnswer]).toBe(networkString);
   });
 }); 

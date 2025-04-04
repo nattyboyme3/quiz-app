@@ -1,4 +1,5 @@
 import { Question } from '../types/quiz.ts';
+import { QUESTION_POINTS } from './questionExplanations.tsx';
 
 export interface IPAddress {
   octets: number[];
@@ -124,21 +125,18 @@ function getRandomCIDR(): number {
 }
 
 function generateCIDRNotationQuestion(): Question {
-  const cidr = getRandomCIDR(); // Random CIDR between 16 and 32
+  const cidr = getRandomCIDR();
   const subnetMask = calculateSubnetMask(cidr);
   const maskString = ipToString(subnetMask);
   
-  // Generate incorrect CIDR values
   const incorrectOptions = [
     (cidr + 1).toString(),
     (cidr - 1).toString(),
     (cidr + 2).toString()
   ];
   
-  // Combine correct and incorrect options
   const options = [cidr.toString(), ...incorrectOptions];
   
-  // Shuffle options
   for (let i = options.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [options[i], options[j]] = [options[j], options[i]];
@@ -149,19 +147,18 @@ function generateCIDRNotationQuestion(): Question {
     text: `What is the CIDR notation for the subnet mask ${maskString}?`,
     options,
     correctAnswer: options.indexOf(cidr.toString()),
-    questionType: 'cidrNotation'
+    questionType: 'cidrNotation',
+    points: QUESTION_POINTS.cidrNotation
   };
 }
 
 function generateUsableHostsQuestion(): Question {
-  const cidr = getRandomCIDR(); // Random CIDR between 16 and 29
+  const cidr = getRandomCIDR();
   const ip = generateRandomIP();
   const subnetMask = calculateSubnetMask(cidr);
   
-  // Calculate number of usable hosts (2^n - 2)
   const usableHosts = Math.pow(2, 32 - cidr) - 2;
   
-  // Generate options (one correct, three incorrect)
   const options = [
     usableHosts.toString(),
     (usableHosts + 2).toString(),
@@ -169,7 +166,6 @@ function generateUsableHostsQuestion(): Question {
     (usableHosts * 2).toString()
   ];
   
-  // Shuffle options
   const correctAnswer = 0;
   for (let i = options.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -181,57 +177,41 @@ function generateUsableHostsQuestion(): Question {
     text: `Given the IP address ${ipToString(ip)}/${cidr}, how many usable host addresses are available in this subnet?`,
     options,
     correctAnswer: options.indexOf(usableHosts.toString()),
-    questionType: 'usableHosts'
+    questionType: 'usableHosts',
+    points: QUESTION_POINTS.usableHosts
   };
 }
 
 function generateHostRangeQuestion(): Question {
-  const cidr = getRandomCIDR(); // Random CIDR between 16 and 29
+  const cidr = getRandomCIDR();
   const ip = generateRandomIP();
   const networkAddress = calculateNetworkAddress(ip, cidr);
   const broadcastAddress = calculateBroadcastAddress(ip, cidr);
   
-  // Calculate the size of the subnet
   const subnetSize = 1 << (32 - cidr);
   const halfSubnetSize = Math.ceil(subnetSize / 2);
   
-  // Calculate first and last usable hosts (network + 1 and broadcast - 1)
   const firstUsable = numberToIP(ipToNumber(networkAddress) + 1);
   const lastUsable = numberToIP(ipToNumber(broadcastAddress) - 1);
   
-  // Generate wrong answers with various patterns
   const wrongOptions = [
-    // Wrong answer 1: network to broadcast
     `${ipToString(networkAddress)} - ${ipToString(broadcastAddress)}`,
-    
-    // Wrong answer 2: first usable to broadcast
     `${ipToString(firstUsable)} - ${ipToString(broadcastAddress)}`,
-    
-    // Wrong answer 3: network to last usable
     `${ipToString(networkAddress)} - ${ipToString(lastUsable)}`,
-    
-    // Wrong answer 4: random start in first half to random end in second half
     `${ipToString(numberToIP(ipToNumber(networkAddress) + Math.floor(Math.random() * halfSubnetSize)))} - ${ipToString(numberToIP(ipToNumber(broadcastAddress) - Math.floor(Math.random() * halfSubnetSize)))}`,
-    
-    // Wrong answer 5: extends into next subnet
     `${ipToString(firstUsable)} - ${ipToString(numberToIP(ipToNumber(broadcastAddress) + Math.floor(Math.random() * halfSubnetSize)))}`,
-    
-    // Wrong answer 6: starts in previous subnet
     `${ipToString(numberToIP(ipToNumber(networkAddress) - Math.floor(Math.random() * halfSubnetSize)))} - ${ipToString(lastUsable)}`
   ];
   
-  // Shuffle wrong options and keep only 3
   for (let i = wrongOptions.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [wrongOptions[i], wrongOptions[j]] = [wrongOptions[j], wrongOptions[i]];
   }
-  wrongOptions.length = 3; // Keep only 3 wrong options
+  wrongOptions.length = 3;
   
-  // Combine correct answer with wrong options
   const correctAnswer = `${ipToString(firstUsable)} - ${ipToString(lastUsable)}`;
   const options = [correctAnswer, ...wrongOptions];
   
-  // Shuffle all options
   for (let i = options.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [options[i], options[j]] = [options[j], options[i]];
@@ -242,35 +222,23 @@ function generateHostRangeQuestion(): Question {
     text: `Given the IP address ${ipToString(ip)}/${cidr}, what is the range of usable host addresses in this subnet?`,
     options,
     correctAnswer: options.indexOf(correctAnswer),
-    questionType: 'hostRange'
+    questionType: 'hostRange',
+    points: QUESTION_POINTS.hostRange
   };
 }
 
 function generateSubnetMaskQuestion(): Question {
-  const cidr = getRandomCIDR(); // Random CIDR between 16 and 29
-  const correctMask = ipToString(calculateSubnetMask(cidr));
+  const cidr = getRandomCIDR();
+  const subnetMask = calculateSubnetMask(cidr);
+  const maskString = ipToString(subnetMask);
   
-  // Generate three incorrect masks
-  const options: string[] = [correctMask];
-  const usedMasks = new Set([correctMask]);
+  const options = [
+    maskString,
+    ipToString(calculateSubnetMask(cidr + 1)),
+    ipToString(calculateSubnetMask(cidr - 1)),
+    ipToString(calculateSubnetMask(cidr + 2))
+  ];
   
-  while (options.length < 4) {
-    // Generate a random CIDR that's different from the correct one
-    let wrongCIDR = getRandomCIDR();
-    while (wrongCIDR === cidr) {
-      wrongCIDR = getRandomCIDR();
-    }
-    
-    const wrongMask = ipToString(calculateSubnetMask(wrongCIDR));
-    
-    // Only add the mask if it's not already used
-    if (!usedMasks.has(wrongMask)) {
-      options.push(wrongMask);
-      usedMasks.add(wrongMask);
-    }
-  }
-  
-  // Shuffle options
   for (let i = options.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [options[i], options[j]] = [options[j], options[i]];
@@ -278,10 +246,11 @@ function generateSubnetMaskQuestion(): Question {
   
   return {
     id: Math.random(),
-    text: `What is the subnet mask in dotted decimal notation for a /${cidr} network?`,
+    text: `What is the subnet mask for the CIDR notation /${cidr}?`,
     options,
-    correctAnswer: options.indexOf(correctMask),
-    questionType: 'subnetMask'
+    correctAnswer: options.indexOf(maskString),
+    questionType: 'subnetMask',
+    points: QUESTION_POINTS.subnetMask
   };
 }
 
@@ -297,41 +266,35 @@ export function isIPInSubnet(ip: IPAddress, networkAddress: IPAddress, cidr: num
 }
 
 function generateIPContainmentQuestion(): Question {
-  const cidr = getRandomCIDR(); // Random CIDR between 16 and 29
+  const cidr = getRandomCIDR();
   const networkIP = generateRandomIP();
   const networkAddress = calculateNetworkAddress(networkIP, cidr);
-  const broadcastAddress = calculateBroadcastAddress(networkIP, cidr);
   
-  // Calculate the size of the subnet
-  const subnetSize = 1 << (32 - cidr);
-  const halfSubnetSize = Math.ceil(subnetSize / 2);
+  // Generate a random IP that might or might not be in the subnet
+  const isInSubnet = Math.random() < 0.5;
+  let testIP: IPAddress;
   
-  // Generate a random valid host IP within the subnet
-  const networkNum = ipToNumber(networkAddress);
-  const broadcastNum = ipToNumber(broadcastAddress);
-  const randomOffset = Math.floor(Math.random() * (broadcastNum - networkNum - 1)) + 1; // +1 to skip network address
-  const correctIP = numberToIP(networkNum + randomOffset);
+  if (isInSubnet) {
+    // Generate an IP in the subnet
+    const networkNum = ipToNumber(networkAddress);
+    const broadcastNum = ipToNumber(calculateBroadcastAddress(networkIP, cidr));
+    const randomOffset = Math.floor(Math.random() * (broadcastNum - networkNum - 1)) + 1;
+    testIP = numberToIP(networkNum + randomOffset);
+  } else {
+    // Generate an IP outside the subnet
+    const networkNum = ipToNumber(networkAddress);
+    const broadcastNum = ipToNumber(calculateBroadcastAddress(networkIP, cidr));
+    const offset = Math.random() < 0.5 ? -1 : 1;
+    testIP = numberToIP(networkNum + offset);
+  }
   
-  // Generate three IPs that are outside the subnet
-  const outsideIPs = [
-    // Randomly choose between previous subnet or next subnet, with random offset
-    Math.random() < 0.5 
-      ? numberToIP(ipToNumber(networkAddress) - Math.floor(Math.random() * halfSubnetSize) - 1)  // IP from previous subnet
-      : numberToIP(ipToNumber(broadcastAddress) + Math.floor(Math.random() * halfSubnetSize) + 1),  // IP from next subnet
-    
-    // IP in next subnet block (network + subnetSize + random offset)
-    numberToIP(ipToNumber(networkAddress) + subnetSize + 
-      Math.floor(Math.random() * subnetSize)),
-    
-    // IP in previous subnet block (network - subnetSize - random offset)
-    numberToIP(ipToNumber(networkAddress) - subnetSize - 
-      Math.floor(Math.random() * subnetSize))
+  const options = [
+    isInSubnet ? 'Yes' : 'No',
+    isInSubnet ? 'No' : 'Yes',
+    'Maybe',
+    'Cannot determine'
   ];
   
-  // Combine all IPs
-  const options = [correctIP, ...outsideIPs].map(ip => ipToString(ip));
-  
-  // Shuffle options
   for (let i = options.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [options[i], options[j]] = [options[j], options[i]];
@@ -339,64 +302,39 @@ function generateIPContainmentQuestion(): Question {
   
   return {
     id: Math.random(),
-    text: `Which usable IP address is contained within the subnet ${ipToString(networkAddress)}/${cidr}?`,
+    text: `Is the IP address ${ipToString(testIP)} in the subnet ${ipToString(networkIP)}/${cidr}?`,
     options,
-    correctAnswer: options.indexOf(ipToString(correctIP)),
-    questionType: 'ipContainment'
+    correctAnswer: options.indexOf(isInSubnet ? 'Yes' : 'No'),
+    questionType: 'ipContainment',
+    points: QUESTION_POINTS.ipContainment
   };
 }
 
 export function generateBroadcastAddressQuestion(): Question {
-  const cidr = getRandomCIDR(); // Random CIDR between 16 and 29
+  const cidr = getRandomCIDR();
   const ip = generateRandomIP();
-  const networkAddress = calculateNetworkAddress(ip, cidr);
   const broadcastAddress = calculateBroadcastAddress(ip, cidr);
+  const broadcastString = ipToString(broadcastAddress);
   
-  // Calculate first and last usable addresses
-  const firstUsable = numberToIP(ipToNumber(networkAddress) + 1);
-  const lastUsable = numberToIP(ipToNumber(broadcastAddress) - 1);
+  const networkAddress = calculateNetworkAddress(ip, cidr);
+  const networkNum = ipToNumber(networkAddress);
+  const broadcastNum = ipToNumber(broadcastAddress);
   
-  // Generate wrong answers
   const wrongOptions = [
-    // Last usable address
-    ipToString(lastUsable),
-    
-    // Network address
-    ipToString(networkAddress),
-    
-    // First usable address
-    ipToString(firstUsable),
-    
-    // Broadcast address of a different subnet
-    ipToString(calculateBroadcastAddress(
-      numberToIP(ipToNumber(networkAddress) + (1 << (32 - cidr))),
-      cidr
-    )),
-    
-    // Network address of next subnet
-    ipToString(numberToIP(ipToNumber(networkAddress) + (1 << (32 - cidr)))),
-    
-    // Random usable address in the subnet
-    ipToString(numberToIP(ipToNumber(networkAddress) + 
-      Math.floor(Math.random() * ((1 << (32 - cidr)) - 2)) + 1)),
-    
-    // Random usable address in next subnet
-    ipToString(numberToIP(ipToNumber(networkAddress) + (1 << (32 - cidr)) + 
-      Math.floor(Math.random() * ((1 << (32 - cidr)) - 2)) + 1))
+    ipToString(numberToIP(broadcastNum + 1)),
+    ipToString(numberToIP(broadcastNum - 1)),
+    ipToString(numberToIP(networkNum - 1)),
+    ipToString(numberToIP(networkNum + 1))
   ];
   
-  // Shuffle wrong options and keep only 3
   for (let i = wrongOptions.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [wrongOptions[i], wrongOptions[j]] = [wrongOptions[j], wrongOptions[i]];
   }
   wrongOptions.length = 3;
   
-  // Combine correct answer with wrong options
-  const correctAnswer = ipToString(broadcastAddress);
-  const options = [correctAnswer, ...wrongOptions];
+  const options = [broadcastString, ...wrongOptions];
   
-  // Shuffle all options
   for (let i = options.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [options[i], options[j]] = [options[j], options[i]];
@@ -404,67 +342,39 @@ export function generateBroadcastAddressQuestion(): Question {
   
   return {
     id: Math.random(),
-    text: `What is the broadcast address for the subnet containing ${ipToString(ip)}/${cidr}?`,
+    text: `What is the broadcast address for the IP address ${ipToString(ip)}/${cidr}?`,
     options,
-    correctAnswer: options.indexOf(correctAnswer),
-    questionType: 'broadcastAddress'
+    correctAnswer: options.indexOf(broadcastString),
+    questionType: 'broadcastAddress',
+    points: QUESTION_POINTS.broadcastAddress
   };
 }
 
 export function generateNetworkAddressQuestion(): Question {
-  const cidr = getRandomCIDR(); // Random CIDR between 16 and 29
+  const cidr = getRandomCIDR();
   const ip = generateRandomIP();
   const networkAddress = calculateNetworkAddress(ip, cidr);
+  const networkString = ipToString(networkAddress);
+  
   const broadcastAddress = calculateBroadcastAddress(ip, cidr);
+  const networkNum = ipToNumber(networkAddress);
+  const broadcastNum = ipToNumber(broadcastAddress);
   
-  // Calculate first and last usable addresses
-  const firstUsable = numberToIP(ipToNumber(networkAddress) + 1);
-  const lastUsable = numberToIP(ipToNumber(broadcastAddress) - 1);
-  
-  // Generate wrong answers
   const wrongOptions = [
-    // Last usable address
-    ipToString(lastUsable),
-    
-    // Broadcast address
-    ipToString(broadcastAddress),
-    
-    // First usable address
-    ipToString(firstUsable),
-    
-    // Network address of a different subnet
-    ipToString(calculateNetworkAddress(
-      numberToIP(ipToNumber(networkAddress) + (1 << (32 - cidr))),
-      cidr
-    )),
-    
-    // Broadcast address of previous subnet
-    ipToString(calculateBroadcastAddress(
-      numberToIP(ipToNumber(networkAddress) - (1 << (32 - cidr))),
-      cidr
-    )),
-    
-    // Random usable address in the subnet
-    ipToString(numberToIP(ipToNumber(networkAddress) + 
-      Math.floor(Math.random() * ((1 << (32 - cidr)) - 2)) + 1)),
-    
-    // Random usable address in previous subnet
-    ipToString(numberToIP(ipToNumber(networkAddress) - (1 << (32 - cidr)) + 
-      Math.floor(Math.random() * ((1 << (32 - cidr)) - 2)) + 1))
+    ipToString(numberToIP(networkNum + 1)),
+    ipToString(numberToIP(networkNum - 1)),
+    ipToString(numberToIP(broadcastNum - 1)),
+    ipToString(numberToIP(broadcastNum + 1))
   ];
   
-  // Shuffle wrong options and keep only 3
   for (let i = wrongOptions.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [wrongOptions[i], wrongOptions[j]] = [wrongOptions[j], wrongOptions[i]];
   }
   wrongOptions.length = 3;
   
-  // Combine correct answer with wrong options
-  const correctAnswer = ipToString(networkAddress);
-  const options = [correctAnswer, ...wrongOptions];
+  const options = [networkString, ...wrongOptions];
   
-  // Shuffle all options
   for (let i = options.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [options[i], options[j]] = [options[j], options[i]];
@@ -472,38 +382,31 @@ export function generateNetworkAddressQuestion(): Question {
   
   return {
     id: Math.random(),
-    text: `What is the network address for the subnet containing ${ipToString(ip)}/${cidr}?`,
+    text: `What is the network address for the IP address ${ipToString(ip)}/${cidr}?`,
     options,
-    correctAnswer: options.indexOf(correctAnswer),
-    questionType: 'networkAddress'
+    correctAnswer: options.indexOf(networkString),
+    questionType: 'networkAddress',
+    points: QUESTION_POINTS.networkAddress
   };
 }
 
 function generateSubnettingQuestion(): Question {
-  // Randomly choose between the seven question types
-  const questionType = Math.random();
-  if (questionType < 0.15) {
-    return generateUsableHostsQuestion();
-  } else if (questionType < 0.3) {
-    return generateHostRangeQuestion();
-  } else if (questionType < 0.45) {
-    return generateSubnetMaskQuestion();
-  } else if (questionType < 0.6) {
-    return generateCIDRNotationQuestion();
-  } else if (questionType < 0.75) {
-    return generateIPContainmentQuestion();
-  } else if (questionType < 0.85) {
-    return generateBroadcastAddressQuestion();
-  } else {
-    return generateNetworkAddressQuestion();
-  }
+  const questionTypes = [
+    generateCIDRNotationQuestion,
+    generateUsableHostsQuestion,
+    generateHostRangeQuestion,
+    generateSubnetMaskQuestion,
+    generateIPContainmentQuestion,
+    generateBroadcastAddressQuestion,
+    generateNetworkAddressQuestion
+  ];
+  
+  const randomType = Math.floor(Math.random() * questionTypes.length);
+  return questionTypes[randomType]();
 }
 
 export function generateSubnettingQuestions(count: number): Question[] {
-  return Array.from({ length: count }, (_, index) => ({
-    ...generateSubnettingQuestion(),
-    id: index + 1
-  }));
+  return Array.from({ length: count }, () => generateSubnettingQuestion());
 }
 
 export function stringToIP(ipString: string): IPAddress {
