@@ -13,13 +13,16 @@ export interface Question {
   options: string[];
   correctAnswer: number;
   questionType: QuestionType;
+  points: number;
 }
 
 export interface QuizState {
   currentQuestionIndex: number;
   score: number;
+  strikes: number;
   answers: number[];
   questions: Question[];
+  isGameOver: boolean;
 }
 
 export interface QuizContextType {
