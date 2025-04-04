@@ -29,9 +29,12 @@ function quizReducer(state: QuizState, action: QuizAction): QuizState {
       const newStrikes = isCorrect ? state.strikes : state.strikes + 1;
       const isGameOver = newStrikes >= MAX_STRIKES;
 
+      // If game is over, don't increment the question index
+      const nextQuestionIndex = isGameOver ? state.currentQuestionIndex : state.currentQuestionIndex + 1;
+
       return {
         ...state,
-        currentQuestionIndex: state.currentQuestionIndex + 1,
+        currentQuestionIndex: nextQuestionIndex,
         score: isCorrect ? state.score + currentQuestion.points : state.score,
         strikes: newStrikes,
         answers: [...state.answers, action.payload],
