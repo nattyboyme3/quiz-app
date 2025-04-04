@@ -1,8 +1,18 @@
+export type QuestionType = 
+  | 'usableHosts'
+  | 'hostRange'
+  | 'subnetMask'
+  | 'cidrNotation'
+  | 'ipContainment'
+  | 'broadcastAddress'
+  | 'networkAddress';
+
 export interface Question {
   id: number;
   text: string;
   options: string[];
   correctAnswer: number;
+  questionType: QuestionType;
 }
 
 export interface QuizState {

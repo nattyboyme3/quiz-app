@@ -148,7 +148,8 @@ function generateCIDRNotationQuestion(): Question {
     id: Math.random(),
     text: `What is the CIDR notation for the subnet mask ${maskString}?`,
     options,
-    correctAnswer: options.indexOf(cidr.toString())
+    correctAnswer: options.indexOf(cidr.toString()),
+    questionType: 'cidrNotation'
   };
 }
 
@@ -179,7 +180,8 @@ function generateUsableHostsQuestion(): Question {
     id: Math.random(),
     text: `Given the IP address ${ipToString(ip)}/${cidr}, how many usable host addresses are available in this subnet?`,
     options,
-    correctAnswer: options.indexOf(usableHosts.toString())
+    correctAnswer: options.indexOf(usableHosts.toString()),
+    questionType: 'usableHosts'
   };
 }
 
@@ -239,7 +241,8 @@ function generateHostRangeQuestion(): Question {
     id: Math.random(),
     text: `Given the IP address ${ipToString(ip)}/${cidr}, what is the range of usable host addresses in this subnet?`,
     options,
-    correctAnswer: options.indexOf(correctAnswer)
+    correctAnswer: options.indexOf(correctAnswer),
+    questionType: 'hostRange'
   };
 }
 
@@ -277,7 +280,8 @@ function generateSubnetMaskQuestion(): Question {
     id: Math.random(),
     text: `What is the subnet mask in dotted decimal notation for a /${cidr} network?`,
     options,
-    correctAnswer: options.indexOf(correctMask)
+    correctAnswer: options.indexOf(correctMask),
+    questionType: 'subnetMask'
   };
 }
 
@@ -337,7 +341,8 @@ function generateIPContainmentQuestion(): Question {
     id: Math.random(),
     text: `Which usable IP address is contained within the subnet ${ipToString(networkAddress)}/${cidr}?`,
     options,
-    correctAnswer: options.indexOf(ipToString(correctIP))
+    correctAnswer: options.indexOf(ipToString(correctIP)),
+    questionType: 'ipContainment'
   };
 }
 
@@ -401,7 +406,8 @@ export function generateBroadcastAddressQuestion(): Question {
     id: Math.random(),
     text: `What is the broadcast address for the subnet containing ${ipToString(ip)}/${cidr}?`,
     options,
-    correctAnswer: options.indexOf(correctAnswer)
+    correctAnswer: options.indexOf(correctAnswer),
+    questionType: 'broadcastAddress'
   };
 }
 
@@ -468,7 +474,8 @@ export function generateNetworkAddressQuestion(): Question {
     id: Math.random(),
     text: `What is the network address for the subnet containing ${ipToString(ip)}/${cidr}?`,
     options,
-    correctAnswer: options.indexOf(correctAnswer)
+    correctAnswer: options.indexOf(correctAnswer),
+    questionType: 'networkAddress'
   };
 }
 
