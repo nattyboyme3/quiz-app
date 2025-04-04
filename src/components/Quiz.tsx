@@ -20,17 +20,17 @@ export function Quiz() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
       <div className="max-w-4xl mx-auto px-4">
         <div className="mb-6">
           <div className="text-center space-y-2">
-            <p className="text-lg text-gray-600">
+            <p className="text-lg text-gray-600 dark:text-gray-300">
               Score: {state.score}
             </p>
-            <p className="text-lg text-red-600">
+            <p className="text-lg text-red-600 dark:text-red-400">
               Strikes: {state.strikes}/3
             </p>
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-gray-500 dark:text-gray-400">
               Current question worth: {state.questions[state.currentQuestionIndex].points} points
             </p>
           </div>

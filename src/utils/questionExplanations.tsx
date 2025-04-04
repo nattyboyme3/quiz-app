@@ -68,27 +68,27 @@ interface QuestionExplanationProps {
 
 export function QuestionExplanation({ questionType }: QuestionExplanationProps): JSX.Element {
   return (
-    <div className="mb-6 text-gray-700 bg-gray-50 p-6 rounded-lg border border-gray-200 shadow-sm">
+    <div className="mb-6 text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm dark:shadow-gray-900/50">
       <div className="space-y-4">
         <div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">How to solve this type of question:</h3>
-          <div className="text-gray-700 leading-relaxed">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">How to solve this type of question:</h3>
+          <div className="text-gray-700 dark:text-gray-300 leading-relaxed">
             {getQuestionTypeExplanation(questionType)}
           </div>
         </div>
         {questionType === 'cidrNotation' && (
-          <div className="mt-4 p-4 bg-blue-50 border border-blue-100 rounded-md">
-            <h4 className="font-medium text-blue-900 mb-2">Quick Tip:</h4>
-            <p className="text-blue-800 text-sm">
+          <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 rounded-md">
+            <h4 className="font-medium text-blue-900 dark:text-blue-300 mb-2">Quick Tip:</h4>
+            <p className="text-blue-800 dark:text-blue-200 text-sm">
               CIDR notation is a compact way to represent subnet masks. Instead of writing out the full subnet mask (like 255.255.255.0), 
               we just write the number of network bits after a forward slash (like /24). This makes it easier to work with and understand subnet sizes.
             </p>
           </div>
         )}
         {questionType === 'ipContainment' && (
-          <div className="mt-4 p-4 bg-blue-50 border border-blue-100 rounded-md">
-            <h4 className="font-medium text-blue-900 mb-2">Quick Tip:</h4>
-            <p className="text-blue-800 text-sm">
+          <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 rounded-md">
+            <h4 className="font-medium text-blue-900 dark:text-blue-300 mb-2">Quick Tip:</h4>
+            <p className="text-blue-800 dark:text-blue-200 text-sm">
               Think of the subnet mask as a filter. When you perform a bitwise AND between an IP and its subnet mask, 
               you're essentially "filtering out" the host bits, leaving only the network portion. If this matches the network address, 
               the IP belongs to that subnet!
@@ -96,18 +96,19 @@ export function QuestionExplanation({ questionType }: QuestionExplanationProps):
           </div>
         )}
         {questionType === 'ipContainmentTF' && (
-          <div className="mt-4 p-4 bg-blue-50 border border-blue-100 rounded-md">
-            <h4 className="font-medium text-blue-900 mb-2">Quick Tip:</h4>
-            <p className="text-blue-800 text-sm">
+          <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 rounded-md">
+            <h4 className="font-medium text-blue-900 dark:text-blue-300 mb-2">Quick Tip:</h4>
+            <p className="text-blue-800 dark:text-blue-200 text-sm">
               Think of the subnet mask as a filter. When you perform a bitwise AND between an IP and its subnet mask, 
               you're essentially "filtering out" the host bits, leaving only the network portion. If this matches the network address, 
-              </p>
+              the IP belongs to that subnet!
+            </p>
           </div>
-        )}  
+        )}
         {questionType === 'broadcastAddress' && (
-          <div className="mt-4 p-4 bg-blue-50 border border-blue-100 rounded-md">
-            <h4 className="font-medium text-blue-900 mb-2">Quick Tip:</h4>
-            <p className="text-blue-800 text-sm">
+          <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 rounded-md">
+            <h4 className="font-medium text-blue-900 dark:text-blue-300 mb-2">Quick Tip:</h4>
+            <p className="text-blue-800 dark:text-blue-200 text-sm">
               Remember this mnemonic: "Broadcast is all ones in the host bits." When converting to binary, 
               the network bits stay the same as the network address, but all host bits become 1s. 
               Alternatively, you can find it by subtracting 1 from the next network address.
@@ -115,9 +116,9 @@ export function QuestionExplanation({ questionType }: QuestionExplanationProps):
           </div>
         )}
         {questionType === 'networkAddress' && (
-          <div className="mt-4 p-4 bg-blue-50 border border-blue-100 rounded-md">
-            <h4 className="font-medium text-blue-900 mb-2">Quick Tip:</h4>
-            <p className="text-blue-800 text-sm">
+          <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 rounded-md">
+            <h4 className="font-medium text-blue-900 dark:text-blue-300 mb-2">Quick Tip:</h4>
+            <p className="text-blue-800 dark:text-blue-200 text-sm">
               The network address is like the "floor" of a subnet - it's the lowest possible address in that subnet. 
               When you perform a bitwise AND between an IP and its subnet mask, you're essentially "zeroing out" 
               all the host bits, which gives you the network address.
@@ -170,7 +171,7 @@ interface AnswerFeedbackProps {
 export function AnswerFeedback({ isCorrect, correctAnswer }: AnswerFeedbackProps): JSX.Element {
   return (
     <div className={`text-lg font-medium mb-4 ${
-      isCorrect ? 'text-green-600' : 'text-red-600'
+      isCorrect ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'
     }`}>
       {isCorrect
         ? "Correct! Well done! 🎉"
