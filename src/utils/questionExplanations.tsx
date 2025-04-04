@@ -3,13 +3,14 @@ import { QuestionType } from '../types/quiz';
 
 // Define points for each question type based on difficulty
 export const QUESTION_POINTS: Record<QuestionType, number> = {
-  usableHosts: 7,    // Basic calculation
+  usableHosts: 10,    // Basic calculation
   hostRange: 15,      // Requires understanding of network and broadcast addresses
   subnetMask: 10,     // Binary conversion required
-  cidrNotation: 9,   // Conceptual understanding
-  ipContainment: 13, // Requires multiple steps and binary operations
-  broadcastAddress: 6, // Complex binary operations
-  networkAddress: 5  // Most complex, requires full understanding of subnetting
+  cidrNotation: 10,   // Conceptual understanding
+  ipContainment: 15, // Requires multiple steps and binary operations
+  broadcastAddress: 15, // Complex binary operations
+  networkAddress: 15,  // Most complex, requires full understanding of subnetting
+  ipContainmentTF: 10
 };
 
 export const getQuestionTypeExplanation = (type: QuestionType): string | JSX.Element => {
@@ -26,7 +27,15 @@ export const getQuestionTypeExplanation = (type: QuestionType): string | JSX.Ele
       return (
         <ol className="list-decimal list-inside space-y-2">
           <li>Convert the IP and subnet mask to binary</li>
-          <li>Perform bitwise AND</li>
+          <li>Perform bitwise AND against the IP</li>
+          <li>If the result equals the network address, the IP is in the subnet</li>
+        </ol>
+      );
+    case 'ipContainmentTF':
+      return (
+        <ol className="list-decimal list-inside space-y-2">
+          <li>Convert the IP and subnet mask to binary</li>
+          <li>Perform bitwise AND against the IP</li>
           <li>If the result equals the network address, the IP is in the subnet</li>
         </ol>
       );
@@ -86,6 +95,15 @@ export function QuestionExplanation({ questionType }: QuestionExplanationProps):
             </p>
           </div>
         )}
+        {questionType === 'ipContainmentTF' && (
+          <div className="mt-4 p-4 bg-blue-50 border border-blue-100 rounded-md">
+            <h4 className="font-medium text-blue-900 mb-2">Quick Tip:</h4>
+            <p className="text-blue-800 text-sm">
+              Think of the subnet mask as a filter. When you perform a bitwise AND between an IP and its subnet mask, 
+              you're essentially "filtering out" the host bits, leaving only the network portion. If this matches the network address, 
+              </p>
+          </div>
+        )}  
         {questionType === 'broadcastAddress' && (
           <div className="mt-4 p-4 bg-blue-50 border border-blue-100 rounded-md">
             <h4 className="font-medium text-blue-900 mb-2">Quick Tip:</h4>

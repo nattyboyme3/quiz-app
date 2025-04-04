@@ -1,0 +1,35 @@
+
+
+  VITE v4.5.12  ready in 195 ms
+
+  ➜  Local:   http://localhost:5173/quiz-app/
+  ➜  Network: use --host to expose
+  ➜  press h to show help
+11:28:54 AM [vite] hmr update /src/context/QuizContext.tsx, /src/index.css
+11:28:54 AM [vite] hmr invalidate /src/context/QuizContext.tsx Could not Fast Refresh ("useQuiz" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/pa
+11:28:54 AM [vite] hmr invalidate /src/context/QuizContext.tsx Could not Fast Refresh ("useQuiz" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+11:28:54 AM [vite] hmr update /src/App.tsx, /src/index.css, /src/components/Quiz.tsx
+11:29:25 AM [vite] hmr update /src/context/QuizContext.tsx, /src/index.css
+11:29:25 AM [vite] hmr invalidate /src/context/QuizContext.tsx Could not Fast Refresh ("useQuiz" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/pa
+11:29:25 AM [vite] hmr invalidate /src/context/QuizContext.tsx Could not Fast Refresh ("useQuiz" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+11:29:25 AM [vite] hmr update /src/App.tsx, /src/index.css, /src/components/Quiz.tsx
+11:31:06 AM [vite] hmr update /src/utils/questionExplanations.tsx, /src/index.css
+11:31:13 AM [vite] hmr update /src/utils/questionExplanations.tsx, /src/index.css (x2)
+11:31:43 AM [vite] hmr update /src/utils/questionExplanations.tsx, /src/index.css (x3)nbiggs112@Nat-Biggs-Mac-Mini-M1 quiz-app % > quiz-app@0.0.0 dev
+> vite
+
+
+  VITE v4.5.12  ready in 195 ms
+
+  ➜  Local:   http://localhost:5173/quiz-app/
+  ➜  Network: use --host to expose
+  ➜  press h to show help
+11:28:54 AM [vite] hmr update /src/context/QuizContext.tsx, /src/index.czsh: command not found: devnbiggs112@Nat-Biggs-Mac-Mini-M1 quiz-app % > quiz-app@0.0.0 dev
+> vite
+
+
+  VITE v4.5.12  ready in 195 ms
+
+  ➜  Local:   http://localhost:5173/quiz-app/
+  ➜  Network: use --host to expose
+  ➜  press h to show help

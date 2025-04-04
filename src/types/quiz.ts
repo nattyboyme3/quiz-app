@@ -4,6 +4,7 @@ export type QuestionType =
   | 'subnetMask'
   | 'cidrNotation'
   | 'ipContainment'
+  | 'ipContainmentTF'
   | 'broadcastAddress'
   | 'networkAddress';
 

@@ -265,7 +265,49 @@ export function isIPInSubnet(ip: IPAddress, networkAddress: IPAddress, cidr: num
   return (ipNum & mask) === (networkNum & mask);
 }
 
-function generateIPContainmentQuestion(): Question {
+export function generateIPContainmentQuestion(): Question {
+  const cidr = Math.floor(Math.random() * 16) + 16; // Random CIDR between 16 and 31
+  const networkIP = generateRandomIP();
+  const networkAddress = calculateNetworkAddress(networkIP, cidr);
+  const broadcastAddress = calculateBroadcastAddress(networkIP, cidr);
+  
+  // Generate a random IP that's in the subnet
+  const inSubnetIP = numberToIP(
+    ipToNumber(networkAddress) + 
+    Math.floor(Math.random() * (ipToNumber(broadcastAddress) - ipToNumber(networkAddress) - 1)) + 1
+  );
+  
+  // Generate three IPs that are outside the subnet
+  const subnetSize = 1 << (32 - cidr);
+  const outsideIPs = [
+    // IP before network address
+    numberToIP(ipToNumber(networkAddress) - Math.floor(Math.random() * subnetSize + 1)),
+    // IP after broadcast address
+    numberToIP(ipToNumber(broadcastAddress) + Math.floor(Math.random() * subnetSize + 1)),
+    // IP in a completely different subnet
+    numberToIP(ipToNumber(networkAddress) + (subnetSize * (Math.floor(Math.random() * 10) + 2)))
+  ];
+  
+  // Combine all IPs
+  const options = [inSubnetIP, ...outsideIPs].map(ip => ipToString(ip));
+  
+  // Shuffle options
+  for (let i = options.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [options[i], options[j]] = [options[j], options[i]];
+  }
+  
+  return {
+    id: Math.random(),
+    text: `Which IP address is contained within the subnet ${ipToString(networkAddress)}/${cidr}?`,
+    options,
+    correctAnswer: options.indexOf(ipToString(inSubnetIP)),
+    questionType: 'ipContainment',
+    points: QUESTION_POINTS.ipContainment
+  };
+}
+
+export function generateIPContainmentQuestionTF(): Question {
   const cidr = getRandomCIDR();
   const networkIP = generateRandomIP();
   const networkAddress = calculateNetworkAddress(networkIP, cidr);
@@ -281,18 +323,18 @@ function generateIPContainmentQuestion(): Question {
     const randomOffset = Math.floor(Math.random() * (broadcastNum - networkNum - 1)) + 1;
     testIP = numberToIP(networkNum + randomOffset);
   } else {
-    // Generate an IP outside the subnet
+    // Generate an IP outside the subnet with more variety
     const networkNum = ipToNumber(networkAddress);
-    const broadcastNum = ipToNumber(calculateBroadcastAddress(networkIP, cidr));
-    const offset = Math.random() < 0.5 ? -1 : 1;
+    const subnetSize = 1 << (32 - cidr);
+    const offset = Math.random() < 0.5 
+      ? -Math.floor(Math.random() * subnetSize + 1)  // Before network
+      : subnetSize + Math.floor(Math.random() * subnetSize);  // After broadcast
     testIP = numberToIP(networkNum + offset);
   }
   
   const options = [
     isInSubnet ? 'Yes' : 'No',
-    isInSubnet ? 'No' : 'Yes',
-    'Maybe',
-    'Cannot determine'
+    isInSubnet ? 'No' : 'Yes'
   ];
   
   for (let i = options.length - 1; i > 0; i--) {
@@ -305,8 +347,8 @@ function generateIPContainmentQuestion(): Question {
     text: `Is the IP address ${ipToString(testIP)} in the subnet ${ipToString(networkIP)}/${cidr}?`,
     options,
     correctAnswer: options.indexOf(isInSubnet ? 'Yes' : 'No'),
-    questionType: 'ipContainment',
-    points: QUESTION_POINTS.ipContainment
+    questionType: 'ipContainmentTF',
+    points: QUESTION_POINTS.ipContainmentTF
   };
 }
 
@@ -398,7 +440,8 @@ function generateSubnettingQuestion(): Question {
     generateSubnetMaskQuestion,
     generateIPContainmentQuestion,
     generateBroadcastAddressQuestion,
-    generateNetworkAddressQuestion
+    generateNetworkAddressQuestion,
+    generateIPContainmentQuestionTF
   ];
   
   const randomType = Math.floor(Math.random() * questionTypes.length);

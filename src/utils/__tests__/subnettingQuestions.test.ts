@@ -7,8 +7,13 @@ import {
   calculateBroadcastAddress,
   ipToString,
   stringToIP,
-  IPAddress
+  ipToNumber,
+  IPAddress,
+  generateIPContainmentQuestion,
+  generateIPContainmentQuestionTF,
+  isIPInSubnet
 } from '../subnettingQuestions';
+import { QUESTION_POINTS } from '../questionExplanations.tsx';
 
 describe('Subnetting Questions', () => {
   // Helper function to check if an IP is in a subnet
@@ -105,6 +110,34 @@ describe('Subnetting Questions', () => {
         // Count how many options are actually in the subnet
         const correctCount = question.options.filter(option => 
           isIPInSubnet(option, network, cidr)
+        ).length;
+
+        expect(correctCount).toBe(1);
+        expect(question.correctAnswer).toBeGreaterThanOrEqual(0);
+        expect(question.correctAnswer).toBeLessThan(question.options.length);
+      }
+    });
+  });
+
+  describe('IP Containment True/False Questions', () => {
+    it('should have exactly one correct answer', () => {
+      const questions = generateSubnettingQuestions(100)
+        .filter(q => q.text.includes('Is the IP address'));
+
+      for (const question of questions) {
+        // Extract network address and CIDR from question text
+        const match = question.text.match(/address ([\d.]+) in the subnet ([\d.]+)\/(\d+)/);
+      
+        if (!match) continue;
+        
+        const [_, testIP, networkIP, cidrStr] = match;
+        const cidr = parseInt(cidrStr);
+
+        const isInSubnet = isIPInSubnet(testIP, networkIP, cidr);
+        const correctAnswer = isInSubnet ? 'Yes' : 'No';
+        // Count how many options are actually in the subnet
+        const correctCount = question.options.filter(option => 
+          option === correctAnswer
         ).length;
 
         expect(correctCount).toBe(1);
@@ -389,4 +422,69 @@ describe('Network Address Question', () => {
     // Verify that the correct answer is the network address
     expect(question.options[question.correctAnswer]).toBe(networkString);
   });
-}); 
+});
+
+describe('IP Containment Question', () => {
+  test('should generate a valid IP containment question', () => {
+    const question = generateIPContainmentQuestion();
+    expect(question).toBeDefined();
+    expect(question.options.length).toBe(4);
+    expect(question.correctAnswer).toBeGreaterThanOrEqual(0);
+    expect(question.correctAnswer).toBeLessThan(4);
+    expect(question.questionType).toBe('ipContainment');
+    
+    // Extract network address and CIDR from question text
+    const match = question.text.match(/subnet ([\d.]+)\/(\d+)/);
+    expect(match).not.toBeNull();
+    const [_, network, cidrStr] = match!;
+    const cidr = parseInt(cidrStr);
+    
+    // Count how many options are actually in the subnet
+    const correctCount = question.options.filter(option => 
+      isIPInSubnet(stringToIP(option), stringToIP(network), cidr)
+    ).length;
+
+    expect(correctCount).toBe(1);
+    expect(question.options[question.correctAnswer]).toBe(question.options.find(option => 
+      isIPInSubnet(stringToIP(option), stringToIP(network), cidr)
+    ));
+  });
+
+  test('should have points assigned', () => {
+    const question = generateIPContainmentQuestion();
+    expect(question.points).toBe(QUESTION_POINTS.ipContainment);
+  });
+});
+
+describe('IP Containment True/False Question', () => {
+  test('should generate a valid IP containment TF question', () => {
+    const question = generateIPContainmentQuestionTF();
+    expect(question).toBeDefined();
+    expect(question.options.length).toBe(2);
+    expect(question.correctAnswer).toBeGreaterThanOrEqual(0);
+    expect(question.correctAnswer).toBeLessThan(2);
+    expect(question.questionType).toBe('ipContainmentTF');
+    
+    // Extract IP and CIDR from question text
+    const match = question.text.match(/IP address ([\d.]+) in the subnet ([\d.]+)\/(\d+)/);
+    expect(match).not.toBeNull();
+    const [_, testIP, networkIP, cidrStr] = match!;
+    const cidr = parseInt(cidrStr);
+    
+    // Check if the test IP is in the subnet
+    const isInSubnet = isIPInSubnet(stringToIP(testIP), stringToIP(networkIP), cidr);
+    
+    // Verify that the correct answer matches whether the IP is in the subnet
+    expect(question.options[question.correctAnswer]).toBe(isInSubnet ? 'Yes' : 'No');
+    
+    // Verify that only Yes/No options are present
+    expect(question.options).toContain('Yes');
+    expect(question.options).toContain('No');
+    expect(question.options.length).toBe(2);
+  });
+
+  test('should have points assigned', () => {
+    const question = generateIPContainmentQuestionTF();
+    expect(question.points).toBe(QUESTION_POINTS.ipContainmentTF);
+  });
+});
