@@ -1,7 +1,7 @@
 import React from 'react';
 import { QuestionType } from '../types/quiz';
 
-export const getQuestionTypeExplanation = (type: QuestionType): string => {
+export const getQuestionTypeExplanation = (type: QuestionType): string | JSX.Element => {
   switch (type) {
     case 'usableHosts':
       return "To find the number of usable hosts, use the formula 2^(32-CIDR) - 2. We subtract 2 because the network address and broadcast address can't be used as host addresses.";
@@ -12,11 +12,31 @@ export const getQuestionTypeExplanation = (type: QuestionType): string => {
     case 'cidrNotation':
       return "CIDR (Classless Inter-Domain Routing) notation represents the number of network bits in a subnet mask. It's written as a forward slash followed by the number of 1s in the binary subnet mask. For example, 255.255.255.0 in binary has 24 consecutive 1s, so it's written as /24. The higher the CIDR number, the smaller the subnet.";
     case 'ipContainment':
-      return "To check if an IP is in a subnet: 1) Convert the IP and subnet mask to binary 2) Perform bitwise AND 3) If the result equals the network address, the IP is in the subnet.";
+      return (
+        <ol className="list-decimal list-inside space-y-2">
+          <li>Convert the IP and subnet mask to binary</li>
+          <li>Perform bitwise AND</li>
+          <li>If the result equals the network address, the IP is in the subnet</li>
+        </ol>
+      );
     case 'broadcastAddress':
-      return "To find the broadcast address: 1) Convert the network address to binary 2) Set all host bits (determined by CIDR) to 1 3) Convert back to decimal. Or simply subtract 1 from the next network address.";
+      return (
+        <ol className="list-decimal list-inside space-y-2">
+          <li>Convert the network address to binary</li>
+          <li>Set all host bits (determined by CIDR) to 1</li>
+          <li>Convert back to decimal</li>
+          <li>Or simply subtract 1 from the next network address</li>
+        </ol>
+      );
     case 'networkAddress':
-      return "To find the network address: 1) Convert the IP and subnet mask to binary 2) Perform bitwise AND between them 3) Convert the result back to decimal. All host bits will be 0.";
+      return (
+        <ol className="list-decimal list-inside space-y-2">
+          <li>Convert the IP and subnet mask to binary</li>
+          <li>Perform bitwise AND between them</li>
+          <li>Convert the result back to decimal</li>
+          <li>All host bits will be 0</li>
+        </ol>
+      );
     default:
       return "";
   }
@@ -32,7 +52,9 @@ export function QuestionExplanation({ questionType }: QuestionExplanationProps):
       <div className="space-y-4">
         <div>
           <h3 className="text-lg font-semibold text-gray-900 mb-2">How to solve this type of question:</h3>
-          <p className="text-gray-700 leading-relaxed">{getQuestionTypeExplanation(questionType)}</p>
+          <div className="text-gray-700 leading-relaxed">
+            {getQuestionTypeExplanation(questionType)}
+          </div>
         </div>
         {questionType === 'cidrNotation' && (
           <div className="mt-4 p-4 bg-blue-50 border border-blue-100 rounded-md">
