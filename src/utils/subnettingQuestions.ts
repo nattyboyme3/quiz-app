@@ -1,5 +1,5 @@
-import { Question } from '../types/quiz.ts';
-import { QUESTION_POINTS } from './questionExplanations.tsx';
+import { Question } from '../types/quiz';
+import { QUESTION_POINTS } from './questionExplanations';
 
 export interface IPAddress {
   octets: number[];
