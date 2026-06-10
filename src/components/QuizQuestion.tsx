@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Question } from '../types/quiz';
 import { AnswerOptions } from './AnswerOptions';
 import { AnswerFeedback, QuestionExplanation } from '../utils/questionExplanations';
@@ -13,14 +13,15 @@ export function QuizQuestion({ question, onAnswer }: QuizQuestionProps) {
   const [showFeedback, setShowFeedback] = useState(false);
   const timeoutRef = useRef<number>();
 
+  useEffect(() => {
+    return () => { if (timeoutRef.current) window.clearTimeout(timeoutRef.current); };
+  }, []);
+
   const handleAnswerClick = (index: number) => {
     setSelectedAnswer(index);
     setShowFeedback(true);
-    
-    const isCorrect = index === question.correctAnswer;
-    
-    // Only auto-advance on correct answers
-    if (isCorrect) {
+
+    if (index === question.correctAnswer) {
       timeoutRef.current = window.setTimeout(() => {
         moveToNextQuestion(index);
       }, 1500);
@@ -55,11 +56,11 @@ export function QuizQuestion({ question, onAnswer }: QuizQuestionProps) {
             correctAnswer={question.options[question.correctAnswer]}
           />
           {selectedAnswer !== question.correctAnswer && (
-            <QuestionExplanation questionType={question.questionType} />
+            <QuestionExplanation questionType={question.questionType} questionText={question.text} />
           )}
           <button
             onClick={() => selectedAnswer !== null && moveToNextQuestion(selectedAnswer)}
-            className="px-6 py-2 bg-blue-500 dark:bg-blue-600 text-white rounded-lg hover:bg-blue-600 dark:hover:bg-blue-700 transition-colors text-sm font-medium"
+            className="px-6 py-3 min-h-[44px] bg-blue-500 dark:bg-blue-600 text-white rounded-lg hover:bg-blue-600 dark:hover:bg-blue-700 transition-colors text-sm font-medium"
           >
             Next Question →
           </button>
@@ -67,4 +68,4 @@ export function QuizQuestion({ question, onAnswer }: QuizQuestionProps) {
       )}
     </div>
   );
-} 
+}
