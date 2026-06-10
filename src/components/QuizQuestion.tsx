@@ -39,7 +39,7 @@ export function QuizQuestion({ question, onAnswer }: QuizQuestionProps) {
 
   return (
     <div className="max-w-3xl mx-auto">
-      <h2 className="text-xl font-medium text-gray-900 dark:text-white mb-8 text-center">
+      <h2 className="text-xl font-semibold tracking-tight text-gray-900 dark:text-white mb-8 text-center">
         {question.text}
       </h2>
       <AnswerOptions
@@ -60,7 +60,7 @@ export function QuizQuestion({ question, onAnswer }: QuizQuestionProps) {
           )}
           <button
             onClick={() => selectedAnswer !== null && moveToNextQuestion(selectedAnswer)}
-            className="px-6 py-3 min-h-[44px] bg-blue-500 dark:bg-blue-600 text-white rounded-lg hover:bg-blue-600 dark:hover:bg-blue-700 transition-colors text-sm font-medium"
+            className="px-6 py-3 min-h-[44px] bg-blue-500 dark:bg-blue-600 text-white rounded-lg hover:bg-blue-600 dark:hover:bg-blue-700 transition-colors text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-800"
           >
             Next Question →
           </button>

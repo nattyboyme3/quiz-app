@@ -3,44 +3,58 @@ import React from 'react';
 interface QuizResultsProps {
   score: number;
   total: number;
+  questionsAnswered: number;
   strikes: number;
-  isGameOver: boolean;
   onRetry: () => void;
 }
 
-export function QuizResults({ score, total, strikes, isGameOver, onRetry }: QuizResultsProps) {
+const TIERS = [
+  { min: 100, label: 'Expert',   bg: 'bg-emerald-50 dark:bg-emerald-950/50', text: 'text-emerald-700 dark:text-emerald-400', border: 'border-emerald-200 dark:border-emerald-800/60' },
+  { min: 75,  label: 'Solid',    bg: 'bg-blue-50 dark:bg-blue-950/50',       text: 'text-blue-700 dark:text-blue-400',       border: 'border-blue-200 dark:border-blue-800/60' },
+  { min: 50,  label: 'Learning', bg: 'bg-amber-50 dark:bg-amber-950/50',     text: 'text-amber-700 dark:text-amber-400',     border: 'border-amber-200 dark:border-amber-800/60' },
+  { min: 0,   label: 'Review',   bg: 'bg-red-50 dark:bg-red-950/50',         text: 'text-red-700 dark:text-red-400',         border: 'border-red-200 dark:border-red-800/60' },
+];
+
+export function QuizResults({ score, total, questionsAnswered, strikes, onRetry }: QuizResultsProps) {
+  const tier = TIERS.find(t => score >= t.min)!;
+
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
-      <div className="max-w-4xl mx-auto px-4">
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md dark:shadow-gray-900/50 p-6 text-center">
-          <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">Game Over!</h2>
-          <div className="space-y-4">
-            <p className="text-xl text-gray-700 dark:text-gray-300">
-              Final Score: <span className="font-semibold">{score}</span> points
-            </p>
-            <p className="text-lg text-red-600 dark:text-red-400">
-              You got {strikes} strikes and were eliminated!
-            </p>
-            <div className="mt-6">
-              {score >= 100 ? (
-                <p className="text-green-600 dark:text-green-400 text-lg">Outstanding! You're a subnetting expert! 🌟</p>
-              ) : score >= 75 ? (
-                <p className="text-blue-600 dark:text-blue-400 text-lg">Great job! You have a solid understanding of subnetting!</p>
-              ) : score >= 50 ? (
-                <p className="text-orange-600 dark:text-orange-400 text-lg">Good effort! Keep practicing to improve your score!</p>
-              ) : (
-                <p className="text-red-600 dark:text-red-400 text-lg">Don't worry! Review the concepts and try again!</p>
-              )}
-            </div>
-            <button
-              onClick={onRetry}
-              className="mt-8 px-6 py-2 bg-blue-500 dark:bg-blue-600 text-white rounded-lg hover:bg-blue-600 dark:hover:bg-blue-700 transition-colors text-lg font-medium"
-            >
-              Try Again
-            </button>
-          </div>
+    <div className="py-16 sm:py-24">
+      <div className="max-w-lg mx-auto px-4 text-center">
+
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gray-600 dark:text-gray-400 mb-10">
+          Quiz Complete
+        </p>
+
+        <div className="flex justify-center mb-8">
+          <span className={`inline-flex items-center px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest border ${tier.bg} ${tier.text} ${tier.border}`}>
+            {tier.label}
+          </span>
         </div>
+
+        <div className="mb-3 leading-none">
+          <span className="text-[5.5rem] sm:text-[7.5rem] font-bold tracking-tight text-gray-900 dark:text-white tabular-nums">
+            {score}
+          </span>
+        </div>
+        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-gray-600 dark:text-gray-400 mb-14">
+          points
+        </p>
+
+        <div className="w-12 h-px bg-gray-200 dark:bg-gray-700 mx-auto mb-8" />
+
+        <p className="text-sm text-gray-600 dark:text-gray-400 mb-10 tabular-nums">
+          {questionsAnswered} of {total} questions&ensp;·&ensp;{strikes} strike{strikes !== 1 ? 's' : ''}
+        </p>
+
+        <button
+          onClick={onRetry}
+          className="px-8 py-3 min-h-[44px] bg-blue-500 dark:bg-blue-600 text-white rounded-lg hover:bg-blue-600 dark:hover:bg-blue-700 transition-colors text-sm font-semibold tracking-wide focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-900"
+        >
+          Try Again
+        </button>
+
       </div>
     </div>
   );
-} 
+}

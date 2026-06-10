@@ -357,11 +357,11 @@ export function QuestionExplanation({ questionType, questionText }: QuestionExpl
         <p className="text-xs font-bold uppercase tracking-widest text-amber-600 dark:text-amber-400 mb-1">
           {entry.category}
         </p>
-        <h3 className="text-xl font-bold text-gray-900 dark:text-gray-50 leading-tight">
+        <h3 className="text-xl font-bold tracking-tight text-gray-900 dark:text-gray-50 leading-tight">
           {entry.title}
         </h3>
         {questionText && (
-          <p className="mt-2 text-xs text-gray-500 dark:text-gray-400 italic leading-relaxed line-clamp-2">
+          <p className="mt-2 text-xs text-gray-600 dark:text-gray-400 italic leading-relaxed line-clamp-2">
             {questionText}
           </p>
         )}
@@ -369,7 +369,7 @@ export function QuestionExplanation({ questionType, questionText }: QuestionExpl
 
       {/* Practical zone — dominant */}
       <div className="mx-4 mb-4 rounded-lg bg-white/80 dark:bg-gray-900/60 border border-amber-100 dark:border-amber-900/40 px-4 py-3">
-        <p className="text-xs font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-2.5">
+        <p className="text-xs font-bold uppercase tracking-wider text-gray-600 dark:text-gray-400 mb-2.5">
           How to solve it
         </p>
         <div className="text-gray-800 dark:text-gray-200 text-sm leading-relaxed">

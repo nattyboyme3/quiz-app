@@ -2,39 +2,75 @@ import React from 'react';
 import { useQuiz } from '../context/QuizContext';
 import { QuizQuestion } from './QuizQuestion';
 import { QuizResults } from './QuizResults';
+import { ProgressBar } from './ProgressBar';
 
 export function Quiz() {
   const { state, submitAnswer, resetQuiz } = useQuiz();
-  const isGameOver = state.strikes >= 3;
 
-  if (isGameOver) {
+  if (state.isGameOver) {
     return (
       <QuizResults
         score={state.score}
         total={state.questions.length}
+        questionsAnswered={state.answers.length}
         strikes={state.strikes}
-        isGameOver={true}
         onRetry={resetQuiz}
       />
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
-      <div className="max-w-4xl mx-auto px-4">
-        <div className="mb-6">
-          <div className="text-center space-y-2">
-            <p className="text-lg text-gray-600 dark:text-gray-300">
-              Score: {state.score}
+    <div className="py-8">
+      <div className="max-w-3xl mx-auto px-4">
+        <ProgressBar
+          current={state.currentQuestionIndex}
+          total={state.questions.length}
+        />
+
+        <div className="flex items-start justify-between mb-10">
+          {/* Left: position context */}
+          <div>
+            <p className="text-sm text-gray-600 dark:text-gray-400 tabular-nums mb-3">
+              Question {state.currentQuestionIndex + 1}
+              <span className="text-gray-400 dark:text-gray-600"> of {state.questions.length}</span>
             </p>
-            <p className="text-lg text-red-600 dark:text-red-400">
-              Strikes: {state.strikes}/3
+            <div
+              className="flex items-center gap-2"
+              aria-label={`${state.strikes} of 3 strikes used`}
+            >
+              {[0, 1, 2].map(i => (
+                <span
+                  key={i}
+                  aria-hidden="true"
+                  className={`text-base font-bold transition-colors ${
+                    i < state.strikes
+                      ? 'text-red-500 dark:text-red-400'
+                      : 'text-gray-200 dark:text-gray-700'
+                  }`}
+                >
+                  ✕
+                </span>
+              ))}
+              <span className="text-xs text-gray-500 dark:text-gray-500 ml-1">
+                {3 - state.strikes} left
+              </span>
+            </div>
+          </div>
+
+          {/* Right: score */}
+          <div className="text-right">
+            <p className="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-500 mb-1">
+              Score
             </p>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-              Current question worth: {state.questions[state.currentQuestionIndex].points} points
+            <p className="text-3xl font-bold tracking-tight tabular-nums text-gray-900 dark:text-white leading-none">
+              {state.score}
+            </p>
+            <p className="text-xs text-gray-600 dark:text-gray-400 mt-1.5">
+              {state.questions[state.currentQuestionIndex].points} pts this question
             </p>
           </div>
         </div>
+
         <QuizQuestion
           question={state.questions[state.currentQuestionIndex]}
           onAnswer={submitAnswer}
@@ -42,4 +78,4 @@ export function Quiz() {
       </div>
     </div>
   );
-} 
+}
